@@ -9,12 +9,13 @@ independent phases, each sized for roughly one session.
 finish a phase, so progress survives across sessions. Phases are ordered by
 dependency — do them roughly in order.
 
-## Phase 1 — Parent authentication UI
-- [ ] Sign up / confirm sign up (email code) / sign in / sign out / forgot
+## Phase 1 — Parent authentication UI ✅
+- [x] Sign up / confirm sign up (email code) / sign in / sign out / forgot
       password screens, using `aws-amplify/auth` APIs
-- [ ] Protect all app routes behind auth (Next.js middleware using
+- [x] Protect all app routes behind auth (this Next.js version renamed
+      `middleware.ts` to `proxy.ts` — see `src/proxy.ts` — using
       `runWithAmplifyServerContext` from `src/utils/amplify-server-utils.ts`)
-- [ ] Redirect unauthenticated users to sign-in
+- [x] Redirect unauthenticated users to sign-in
 - **Done when**: you can sign up, verify email, log in/out, and can't reach
   any page without being logged in.
 
