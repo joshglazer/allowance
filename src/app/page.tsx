@@ -1,7 +1,9 @@
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getCurrentUser } from 'aws-amplify/auth/server';
 import { runWithAmplifyServerContext } from '@/utils/amplify-server-utils';
 import SignOutButton from '@/components/SignOutButton';
+import { linkClass } from '@/components/ui';
 
 export default async function Home() {
   const user = await runWithAmplifyServerContext({
@@ -14,6 +16,9 @@ export default async function Home() {
       <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
         Welcome, {user.signInDetails?.loginId ?? user.username}
       </h1>
+      <Link href="/kids" className={linkClass}>
+        Manage kid profiles
+      </Link>
       <SignOutButton />
     </div>
   );

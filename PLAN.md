@@ -19,11 +19,17 @@ dependency — do them roughly in order.
 - **Done when**: you can sign up, verify email, log in/out, and can't reach
   any page without being logged in.
 
-## Phase 2 — Kid profiles (parent-side)
-- [ ] CRUD UI for the `Kid` model: name, avatar, PIN
-- [ ] Decide + implement PIN hashing (a Lambda/custom mutation is more
+## Phase 2 — Kid profiles (parent-side) ✅
+- [x] CRUD UI for the `Kid` model: name, avatar, PIN
+- [x] Decide + implement PIN hashing (a Lambda/custom mutation is more
       correct than hashing in the browser — flag this as a decision to make
       at the start of the session)
+      - Decided: client-side hashing (Web Crypto SHA-256 + random salt, see
+        `src/utils/pin.ts`). A Kid record is already owner-scoped to the
+        parent's Cognito identity, and a 4-6 digit PIN is a UX gate on an
+        already-authenticated session rather than an independent auth
+        boundary, so a Lambda custom mutation would add real infra for
+        marginal security benefit.
 - **Done when**: parent can add/edit/remove kid profiles, each with a PIN.
 
 ## Phase 3 — Chore management (parent-side)
