@@ -32,10 +32,13 @@ dependency — do them roughly in order.
         marginal security benefit.
 - **Done when**: parent can add/edit/remove kid profiles, each with a PIN.
 
-## Phase 3 — Chore management (parent-side)
-- [ ] CRUD UI for the `Chore` model: name, description, value, active toggle
-- [ ] Decide whether chores are global (any kid can do them) or assigned to
+## Phase 3 — Chore management (parent-side) ✅
+- [x] CRUD UI for the `Chore` model: name, description, value, active toggle
+- [x] Decide whether chores are global (any kid can do them) or assigned to
       specific kids — current schema has no assignment field, may need one
+      - Decided: chores are assigned to one specific kid. Added a required
+        `kidId`/`kid` belongsTo relation on `Chore` (and `assignedChores`
+        hasMany on `Kid`) in `amplify/data/resource.ts`.
 - **Done when**: parent can create/edit/deactivate chores with dollar values.
 
 ## Phase 4 — Kid login / profile switcher

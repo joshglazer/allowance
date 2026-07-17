@@ -19,6 +19,9 @@ export default async function Home() {
       <Link href="/kids" className={linkClass}>
         Manage kid profiles
       </Link>
+      <Link href="/chores" className={linkClass}>
+        Manage chores
+      </Link>
       <SignOutButton />
     </div>
   );
