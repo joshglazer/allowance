@@ -14,6 +14,7 @@ const schema = a.schema({
       pinHash: a.string().required(),
       avatarKey: a.string(),
       balanceCents: a.integer().default(0),
+      assignedChores: a.hasMany('Chore', 'kidId'),
       chores: a.hasMany('ChoreCompletion', 'kidId'),
       ledgerEntries: a.hasMany('LedgerEntry', 'kidId'),
       redemptions: a.hasMany('Redemption', 'kidId'),
@@ -26,6 +27,8 @@ const schema = a.schema({
       description: a.string(),
       valueCents: a.integer().required(),
       active: a.boolean().default(true),
+      kidId: a.id().required(),
+      kid: a.belongsTo('Kid', 'kidId'),
       completions: a.hasMany('ChoreCompletion', 'choreId'),
     })
     .authorization((allow) => [allow.owner()]),
