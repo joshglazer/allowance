@@ -31,6 +31,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ConfigureAmplifyClientSide />
         {children}
+        <footer className="px-4 py-4 text-center text-xs text-muted-foreground">
+          Listening activity may be delayed up to 15 minutes.
+        </footer>
       </body>
     </html>
   );
