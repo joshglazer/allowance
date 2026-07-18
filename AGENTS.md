@@ -22,3 +22,77 @@ This runs `ampx sandbox --profile allowance` (the `allowance` AWS CLI profile
 must be configured locally) and stays running, redeploying on backend changes
 under `amplify/`. Leave it running alongside `npm run dev`. To tear the sandbox
 down: `npm run sandbox:delete`.
+
+# Component architecture: shadcn + atomic design + vertical slicing
+
+This app uses [shadcn/ui](https://ui.shadcn.com) as its component library,
+organized by atomic design tier, with one deliberate departure: single-use
+"organism" components are vertically sliced into the route that owns them
+instead of collected into a shared bucket.
+
+```
+src/
+  lib/utils.ts                # shadcn's cn() helper — generated, don't hand-edit
+  components/
+    design/                   # atoms — raw shadcn primitives, CLI-managed only
+    molecules/                 # small, dependency-free combos of 2+ atoms,
+                                # shared across more than one route
+    templates/                 # page-level layout skeletons, no data fetching,
+                                # shared across more than one route
+  app/
+    <route>/
+      page.tsx                 # fetches data, composes templates/organisms
+      _components/             # organisms — feature-specific, usually
+                                # data/state-aware, used by exactly this route
+```
+
+**Atoms live only in `src/components/design/`, and only the shadcn CLI writes
+there.** To add a new primitive: `npx shadcn@latest add <name>`. Never
+hand-write a new file in `design/`, never import the underlying primitive
+library (currently `@base-ui/react`) from outside `design/` — everything else
+in the app builds on the `design/` wrappers, not the raw library, so the
+whole app gets one consistent implementation of every button/input/card.
+
+**Vertical slicing for organisms.** A form, list manager, or other
+feature-specific component used by exactly one route does **not** go in a
+shared `components/organisms/` folder — it lives in that route's private
+`_components/` folder (e.g. `src/app/kids/_components/kid-form.tsx`), using
+Next's `_folder` convention (a leading underscore opts the folder out of
+routing). This keeps single-use complexity colocated with the route that
+owns it. Only promote a component out to a shared location if a second,
+unrelated route genuinely needs it too — don't pre-create that folder
+speculatively.
+
+**Where does a new component go?**
+1. Raw shadcn primitive → `src/components/design/` via the CLI.
+2. Dependency-free combination of 2+ atoms, reused (or clearly reusable)
+   across more than one route → `src/components/molecules/`.
+3. Page-level layout skeleton (no data fetching), reused across more than
+   one route → `src/components/templates/`.
+4. Anything else — specific to one route/section, usually wired to state or
+   Amplify calls → that route's own `_components/`.
+
+**Forms use `react-hook-form` + `zod` + the design-layer `Field` primitives**
+(`Field`, `FieldLabel`, `FieldError`, from `design/field.tsx`) instead of
+manual `useState`-per-field validation. Reuse existing validation logic from
+`src/utils/` inside the zod schema (e.g. `isValidPin`, `dollarsInputToCents`)
+rather than re-implementing it — see `src/app/chores/_components/chore-form.tsx`
+for a schema that `.transform()`s a dollar-string input straight into
+`valueCents: number`. Non-field errors (a failed Amplify call, not a
+validation error) are set via `form.setError('root', { message })` and
+rendered through the shared `molecules/status-alert.tsx`.
+
+**Dark mode is OS-preference-driven** (`@media (prefers-color-scheme: dark)`
+in `globals.css`), not a manual toggle — there's no `next-themes` and no
+`.dark` class anywhere. If you add shadcn components later and re-run the
+CLI's `init`, it will try to switch this to a `.dark`-class strategy
+(`@custom-variant dark (&:is(.dark *));`); undo that and fold its `.dark { }`
+variable block back into the `prefers-color-scheme` media query to keep this
+behavior.
+
+**This project's shadcn CLI is a newer major version than you likely
+remember** (registry presets like `base-nova` instead of `style`/`baseColor`
+pairs, `@base-ui/react` instead of Radix under the hood, no more `Form`
+component — it's `Field`/`FieldLabel`/`FieldError`/etc. from `design/field.tsx`
+instead). Don't assume older shadcn conventions; run `npx shadcn@latest add
+<name>` and read the generated file before wiring it up.
