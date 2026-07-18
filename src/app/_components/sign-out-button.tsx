@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signOut } from 'aws-amplify/auth';
 
+import { Button } from '@/components/design/button';
+
 export default function SignOutButton() {
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
@@ -16,13 +18,8 @@ export default function SignOutButton() {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleSignOut}
-      disabled={signingOut}
-      className="rounded-md border border-black/[.15] px-4 py-2 font-medium transition-colors hover:bg-black/[.04] disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/[.2] dark:hover:bg-white/[.08]"
-    >
+    <Button type="button" variant="outline" onClick={handleSignOut} disabled={signingOut}>
       {signingOut ? 'Signing out…' : 'Sign out'}
-    </button>
+    </Button>
   );
 }

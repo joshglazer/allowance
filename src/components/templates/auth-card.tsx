@@ -1,0 +1,20 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/design/card';
+
+export function AuthCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-1 items-center justify-center bg-muted/30 px-4 py-16">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>{children}</CardContent>
+      </Card>
+    </div>
+  );
+}
