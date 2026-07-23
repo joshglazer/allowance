@@ -23,6 +23,9 @@ export default async function Home() {
       <Link href="/chores" className={cn(buttonVariants({ variant: 'link' }))}>
         Manage chores
       </Link>
+      <Link href="/switch-kid" className={cn(buttonVariants({ variant: 'link' }))}>
+        Kid mode
+      </Link>
       <SignOutButton />
     </div>
   );

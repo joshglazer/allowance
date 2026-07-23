@@ -18,3 +18,11 @@ export function toKidRecord(kid: Kid): KidRecord {
     owner: kid.owner,
   };
 }
+
+// For the kid picker screen: no pinHash, since PIN checks happen server-side
+// (see src/app/switch-kid/actions.ts) and this record is sent to the browser.
+export type KidSummary = Pick<KidRecord, 'id' | 'name' | 'avatarKey'>;
+
+export function toKidSummary(kid: Kid): KidSummary {
+  return { id: kid.id, name: kid.name, avatarKey: kid.avatarKey };
+}
