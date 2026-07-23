@@ -41,10 +41,19 @@ dependency — do them roughly in order.
         hasMany on `Kid`) in `amplify/data/resource.ts`.
 - **Done when**: parent can create/edit/deactivate chores with dollar values.
 
-## Phase 4 — Kid login / profile switcher
-- [ ] "Who's doing chores?" screen listing kid avatars
-- [ ] PIN entry that checks against `pinHash`, sets an "active kid" client
+## Phase 4 — Kid login / profile switcher ✅
+- [x] "Who's doing chores?" screen listing kid avatars
+- [x] PIN entry that checks against `pinHash`, sets an "active kid" client
       session (separate from the parent's Cognito session)
+      - Decided: PIN verification happens server-side in a Server Action
+        (`src/app/switch-kid/actions.ts`), so `pinHash` never reaches the
+        kid picker's client bundle. The active-kid session is a plain
+        (unsigned) httpOnly cookie, not cryptographically signed — every
+        `Kid` record is owner-scoped to the parent's Cognito session
+        regardless of this cookie's value, so a tampered cookie can only
+        mislead the UI about which already-authorized kid is "active," not
+        grant access beyond the signed-in parent's account. Same reasoning
+        as the Phase 2 PIN-hashing decision.
 - **Done when**: a kid can pick their profile, enter their PIN, and land on
   their own view.
 
