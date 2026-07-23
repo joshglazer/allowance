@@ -72,9 +72,17 @@ dependency — do them roughly in order.
   `ChoreCompletion` records are already queryable under the parent's
   account in the meantime.)
 
-## Phase 6 — Parent approval + ledger posting
-- [ ] Parent view of pending `ChoreCompletion`s, approve/reject
-- [ ] On approve: create a `LedgerEntry` and update `Kid.balanceCents`
+## Phase 6 — Parent approval + ledger posting ✅
+- [x] Parent view of pending `ChoreCompletion`s, approve/reject
+- [x] On approve: create a `LedgerEntry` and update `Kid.balanceCents`
+      - Decided: approve/reject run as Server Actions
+        (`src/app/approvals/actions.ts`), unlike the Phase 3/5 client-side
+        mutations. Approval is three dependent writes (mark the completion
+        `APPROVED`, create a `LedgerEntry`, bump `Kid.balanceCents`) that
+        need to happen together, and the action re-checks the completion is
+        still `PENDING` before applying them — guarding against a
+        double-click or two open tabs double-crediting a kid's balance in a
+        way a bare client mutation wouldn't.
 - **Done when**: approving a completed chore updates the kid's balance.
 
 ## Phase 7 — Piggy bank visualization
