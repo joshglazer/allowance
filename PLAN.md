@@ -57,10 +57,20 @@ dependency — do them roughly in order.
 - **Done when**: a kid can pick their profile, enter their PIN, and land on
   their own view.
 
-## Phase 5 — Kid chore completion flow
-- [ ] Kid-facing view of their active chores
-- [ ] Mark chore complete → creates `ChoreCompletion` with status `PENDING`
+## Phase 5 — Kid chore completion flow ✅
+- [x] Kid-facing view of their active chores
+- [x] Mark chore complete → creates `ChoreCompletion` with status `PENDING`
+      - Decided: the "mark done" mutation runs client-side (like the Phase 3
+        chore CRUD) rather than as a Server Action — unlike the Phase 2 PIN
+        hash, a `ChoreCompletion` record has no secret to keep out of the
+        client bundle, so the extra indirection isn't worth it. The kid page
+        passes `activeKidId` down as a prop (read server-side from the
+        cookie) so the client mutation can't be pointed at an arbitrary kid
+        without already having a valid active-kid session.
 - **Done when**: kid can mark chores done; parent can see what's pending.
+  (The parent-facing pending view/approval UI is Phase 6 — the
+  `ChoreCompletion` records are already queryable under the parent's
+  account in the meantime.)
 
 ## Phase 6 — Parent approval + ledger posting
 - [ ] Parent view of pending `ChoreCompletion`s, approve/reject
